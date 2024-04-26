@@ -1,45 +1,51 @@
+import javax.swing.*;
+import java.awt.*;
 import java.util.concurrent.TimeUnit;
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
 import java.util.Scanner;
 
+
 /**
  * A three-horse race, each horse running in its own lane
  * for a given distance
- * 
+ *
  * @author McFarewell
  * @version 1.0
  */
-public class Race {
+public class Race{
     private int raceLength;
     private ArrayList<Horse> horsesList;
     private ArrayList<Horse> winningHorses;
-
+    private long startTime;
     /**
      * Constructor for objects of class Race
      * Initially there are no horses in the lanes
-     * 
+     *
      * @param distance the length of the racetrack (in metres/yards...)
      */
-    public Race(int distance) {
+    public Race(int distance, ArrayList<Horse> horsesList) {
         // initialise instance variables
 
         if (distance <= 0) {
             throw new IllegalArgumentException("Error: The value you have entered is not correct");
         }
         raceLength = distance;
-        horsesList = new ArrayList<>();
+
+        this.horsesList = horsesList;
 
         winningHorses = new ArrayList<>();
 
     }
 
+
     /**
      * Adds a horse to the race in a given lane
-     * 
+     *
      * @param theHorse   the horse to be added to the race
-     * @param laneNumber the lane that the horse will be added to
+
      */
 
     // add input validation
@@ -54,8 +60,7 @@ public class Race {
             theHorse.setConfidence(correctConfidence(theHorse.getConfidence()));
 
             // throw new IllegalArgumentException(
-            // "Error: The value you have entered is not correct it should be between 0 and
-            // 1");
+            //         "Error: The value you have entered is not correct it should be between 0 and 1");
         }
 
         if (theHorse.getName() == null) {
@@ -76,6 +81,7 @@ public class Race {
 
     }
 
+
     public double correctConfidence(double confidence) {
         Scanner scanner = new Scanner(System.in);
 
@@ -85,6 +91,7 @@ public class Race {
         }
         return confidence;
     }
+
 
     public void removeHorse(Horse theHorse) {
 
@@ -124,16 +131,6 @@ public class Race {
 
     }
 
-    public String inpuString(String message) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println(message);
-        return scanner.nextLine();
-    }
-
-    public void afterRace() {
-        winningHorses.clear();
-    }
-
     /**
      * Start the race
      * The horse are brought to the start and
@@ -141,18 +138,84 @@ public class Race {
      * race is finished
      */
 
-    private void clearScreen() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+
+//    public void updateHorseData(long raceDuration)
+//    {
+//        for(Horse horse: horsesList)
+//        {
+//            horse.incrementTotalRaces();
+//            horse.addRaceDistance(horse.getDistanceTravelled());
+//            if(winningHorses.contains(horse))
+//            {
+//                horse.addFinish(1);
+//            }
+//            else if(horse.hasFallen())
+//            {
+//                horse.addFinish(-1);
+//            }
+//            else
+//            {
+//                horse.addFinish(0);
+//            }
+//            horse.addFinishTime((int)raceDuration);
+//
+//        }
+//
+//        while(winningHorses.size() > 0)
+//        {
+//            winningHorses.remove(0);
+//        }
+//    }
+
+    public void updateHorseData(long raceDuration) {
+        for (Horse horse : horsesList) {
+            horse.incrementTotalRaces();
+            horse.addRaceDistance(horse.getDistanceTravelled());
+
+            // Check if the horse has won or fallen
+            if (winningHorses.contains(horse)) {
+                horse.addFinish(1);
+                horse.addFinishTime((int) raceDuration);
+            } else if (horse.hasFallen()) {
+                // If the horse has fallen, its finish time is when it fell
+                long finishTime = horse.getFallTime(); // Get the fall time of the horse
+                horse.addFinish(-1); // Mark the fall as a negative finish
+                horse.addFinishTime((int) (finishTime - startTime)); // Record the finish time
+            } else {
+                horse.addFinish(0); // Not a win or fall
+                horse.addFinishTime((int) raceDuration);
+            }
+        }
+
+        // Clear the list of winning horses for the next race
+        winningHorses.clear();
     }
 
-    public void startRace() {
-        String input;
 
-        do {
-            resetLane();
-            boolean finished = false;
-            afterRace();
+
+
+    public String inputString(String message)
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(message);
+        return scanner.nextLine();
+    }
+
+//    public void rerun()
+//    {
+//        String input = inputString("Would you like to start the race");
+//        while(input.equalsIgnoreCase("yes")) {
+//            startRace();
+//            input = inputString("Would you like to start the race again");
+//        }
+//    }
+
+    public void startRace() {
+        startTime = System.currentTimeMillis();
+        long endTime = 0;
+        long raceDuration = 0;
+        boolean finished = false;
+
 
             // Check if any horse lane is empty
             if ((horsesList.isEmpty())) {
@@ -162,44 +225,56 @@ public class Race {
 
             resetLane();
 
-            while (!finished && (winningHorses.isEmpty() || !HorsesFallen())) {
-                moveHorses();
-                printRace();
+        while (!finished && (winningHorses.isEmpty() || !HorsesFallen())) {
+            moveHorses();
+            printRace();
 
-                // Check if any horse has won the race
-                for (Horse horse : horsesList) {
-                    if (!winningHorses.isEmpty()) {
-                        printWinner();
-                        finished = true;
-                        break;
-                    } else {
-                        updatewinningHorses(horse);
-                    }
-
-                }
-
-                // Check if all horses have fallen
-                if (HorsesFallen()) {
-                    System.out.println("All horses have fallen. No winner this time.");
+            // Check if any horse has won the race
+            for (Horse horse : horsesList) {
+                if (!winningHorses.isEmpty()) {
+                    printWinner();
                     finished = true;
-                }
-
-                try {
-                    TimeUnit.MILLISECONDS.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    endTime = System.currentTimeMillis();
+                    raceDuration = endTime - startTime;
+                    updateHorseData(raceDuration);
+                    break;
+                } else {
+                    updatewinningHorses(horse);
                 }
 
             }
 
-            input = inpuString("Do you want to race again (yes/no)");
+            // Check if all horses have fallen
+            if (HorsesFallen()) {
+                System.out.println("All horses have fallen. No winner this time.");
+                finished = true;
+                endTime = System.currentTimeMillis();
+                raceDuration = endTime - startTime;
+                updateHorseData(raceDuration);
+            }
 
-            raceLength = Integer.parseInt(inpuString("Enter the distance"));
 
-        } while (input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y"));
 
-        System.exit(0);
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        new Menu(horsesList);
+
+
+
     }
+
+    private void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
 
     public void printWinner() {
         Collections.sort(horsesList, Comparator.comparingInt(Horse::getDistanceTravelled).reversed());
@@ -239,16 +314,11 @@ public class Race {
         return everyoneHasFallen;
     }
 
-    public static void main(String[] args) {
-        Main main = new Main();
-        main.main(null);
-    }
-
     /**
      * Randomly make a horse move forward or fall depending
      * on its confidence rating
      * A fallen horse cannot move
-     * 
+     *
      * @param theHorse the horse to be moved
      */
     private void moveHorse(Horse theHorse) {
@@ -347,7 +417,7 @@ public class Race {
     /***
      * print a character a given number of times.
      * e.g. printmany('x',5) will print: xxxxx
-     * 
+     *
      * @param aChar the character to Print
      */
     private void multiplePrint(char aChar, int times) {
