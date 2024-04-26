@@ -87,7 +87,7 @@ public class StartRace extends JFrame implements ActionListener {
                 {
                     Race race = new Race(distanceInt, horses);
                     dispose();
-                    race.startRace();
+                    race.startRaceGUI();
 
                 }
             } catch (NumberFormatException ex)
