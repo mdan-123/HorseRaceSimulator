@@ -62,6 +62,8 @@ To run the code for part2 navigate to the part2 folder using the terminal or a I
 
 If on terminal compile the file called Race.java by typing javac Race.java
 
+If the terminal does not compile the code and says error. Then compile the RedButton.java by doing javac RedButton.java. Then compile the Race.java
+
 Then once successfully compiled run the file by typing java Race.java.
 
 If on IDE then just run Race.java.
