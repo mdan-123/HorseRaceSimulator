@@ -194,7 +194,11 @@ public class Race {
 
             input = inpuString("Do you want to race again (yes/no)");
 
-            raceLength = Integer.parseInt(inpuString("Enter the distance"));
+            
+            if (input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y")) {
+
+                raceLength = Integer.parseInt(inpuString("Enter the distance"));
+            }
 
         } while (input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y"));
 
