@@ -1,62 +1,19 @@
 import java.util.ArrayList;
-import java.util.Scanner;
 
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) {
+        Horse horse1 = new Horse('1', "Horse 1", 0.2);
+        Horse horse2 = new Horse('2', "Horse 2", 0.3);
+        Horse horse3 = new Horse('3', "Horse 3", 0.4);
+        ArrayList<Horse> horses = new ArrayList<>();
+        horses.add(horse1);
+        horses.add(horse2);
+        horses.add(horse3);
+        Race race = new Race(10, horses);
+//        race.startRace();
 
-        int distance = 0;
-    
-        // the String to int conversion happens here
-        distance = Integer.parseInt(inputString("Enter the distance"));
-    
-      
-        Race race = new Race(distance);
-
-        int numberOfHorses = 0;
-
-        
-        
-        // the String to int conversion happens here
-        numberOfHorses = Integer.parseInt(inputString("Enter the number of horses (>2)"));
-        
-        while (numberOfHorses < 2) {
-            numberOfHorses = Integer.parseInt(inputString("Enter the number of horses (>2)"));
-        }
-  
-
-
-        for(int i = 0 ; i < numberOfHorses; i++){
-            String name = inputString("Enter the name of the horse");
-            char symbol = inputString("Enter the symbol of the horse").charAt(0);
-            double confidence = 0;
-        
-            
-                // the String to int conversion happens here
-            confidence = Double.parseDouble(inputString("Enter the confidence of the horse"));
-    
-
-            Horse horse = new Horse(symbol, name, confidence);
-
-            race.addHorse(horse);
-        }
-
-        race.startRace();
-
-
-
-
-    }
-
-
-
-    public static String inputString(String message) {
-        // Add the missing closing parenthesis
-        // to fix the "illegal start of expression" error.
-        // Return the input string.
-        Scanner scanner = new Scanner(System.in);
-        System.out.println(message);
-        return scanner.nextLine();
+        new Runner();
     }
 }
-
-
