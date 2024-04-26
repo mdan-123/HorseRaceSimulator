@@ -210,7 +210,7 @@ public class Race{
 //        }
 //    }
 
-    public void startRace() {
+    public void startRaceGUI() {
         startTime = System.currentTimeMillis();
         long endTime = 0;
         long raceDuration = 0;
@@ -268,6 +268,11 @@ public class Race{
 
 
 
+    }
+
+    public static void main(String[] args){
+        Main main = new Main();
+        main.main(null);
     }
 
     private void clearScreen() {
